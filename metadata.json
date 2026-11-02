@@ -1,0 +1,6 @@
+{
+  "name": "Aplicación Juan Pablo I",
+  "description": "Plataforma de documentos institucionales de Juan Pablo I",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

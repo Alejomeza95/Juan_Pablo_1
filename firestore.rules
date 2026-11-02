@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función de verificación de Superadministrador (Rectoría / Desarrolladores Principales)
+    // El acceso con cuenta Google está reservado exclusivamente para los administradores autorizados
+    function isSuperAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'diegoalejandro.narvaezmeza95@gmail.com' ||
+        request.auth.token.email == 'quino1981@gmail.com'
+      );
+    }
+
+    // 0. Gestión de Usuarios y Credenciales del Sistema
+    // - Lectura: Abierta para permitir la validación de credenciales (Usuario y Contraseña) en el login
+    // - Creación y Eliminación: Exclusivo para Superadministradores (Rectoría)
+    // - Actualización: Permitida para cambio de contraseña propio y administración de estado
+    match /authorizedUsers/{userId} {
+      allow read: if true;
+      allow update: if true;
+      allow create, delete: if isSuperAdmin();
+    }
+
+    // 1. Módulo de Permisos Académicos Estudiantiles
+    // - BLOQUEADO ESTRICTAMENTE para cualquier usuario que no sea el Administrador Principal con Google
+    match /permisosAcademicos/{permisoId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // 2. Módulo de Asistencia Estudiantil
+    // - Permiso total para registro, justificación de inasistencias y reportes
+    match /estudiantes/{estudianteId} {
+      allow read, write: if true;
+    }
+    match /sesionesAsistencia/{sesionId} {
+      allow read, write: if true;
+    }
+    match /configuracionAusentismo/{configId} {
+      allow read, write: if true;
+    }
+
+    // 3. Biblioteca de Documentos Institucionales
+    // - Permiso total para consulta, subida, edición y descarga
+    match /documents/{document} {
+      allow read, write: if true;
+    }
+
+    // 4. Agenda Académica y Calendario Escolar
+    // - Permiso total para agendar eventos y consultar actividades
+    match /events/{eventId} {
+      allow read, write: if true;
+    }
+    match /agenda/{eventId} {
+      allow read, write: if true;
+    }
+    match /announcements/{announcementId} {
+      allow read, write: if true;
+    }
+
+    // 5. Configuración Académica (Asignaturas, Docentes, Salones y Cursos)
+    // - Permiso total para configuración institucional
+    match /teachers/{teacherId} {
+      allow read, write: if true;
+    }
+    match /schoolGroups/{groupId} {
+      allow read, write: if true;
+    }
+    match /subjects/{subjectId} {
+      allow read, write: if true;
+    }
+    match /teachingAssignments/{assignmentId} {
+      allow read, write: if true;
+    }
+    match /academicConfig/{configId} {
+      allow read, write: if true;
+    }
+
+    // 6. Configuración de Año Escolar y Horarios
+    // - Permiso total para administración de periodos y carga académica
+    match /academicYears/{yearId} {
+      allow read, write: if true;
+    }
+    match /schedules/{course} {
+      allow read, write: if true;
+    }
+
+    // Regla residual de seguridad
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+  }
+}

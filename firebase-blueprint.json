@@ -1,0 +1,201 @@
+{
+  "entities": {
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Docente de la institución educativa",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string",
+          "description": "Nombre completo del docente"
+        },
+        "internalCode": {
+          "type": "string",
+          "description": "Código o identificador interno único"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["activo", "inactivo"],
+          "description": "Estado del docente"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de última actualización"
+        }
+      },
+      "required": ["fullName", "status"]
+    },
+    "SchoolGroup": {
+      "title": "SchoolGroup",
+      "description": "Grado y grupo de la institución",
+      "type": "object",
+      "properties": {
+        "grade": {
+          "type": "number",
+          "description": "Número del grado (6 a 11)"
+        },
+        "gradeName": {
+          "type": "string",
+          "description": "Nombre del grado (Sexto, Séptimo, etc.)"
+        },
+        "section": {
+          "type": "string",
+          "description": "Letra del grupo (A, B, C...)"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Nombre para mostrar (e.g. 6A)"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Si el grupo está activo en el año lectivo"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de actualización"
+        }
+      },
+      "required": ["grade", "section", "displayName", "active"]
+    },
+    "Subject": {
+      "title": "Subject",
+      "description": "Asignatura académica del plan de estudios",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nombre de la asignatura"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Si la materia está activa"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de actualización"
+        }
+      },
+      "required": ["name", "active"]
+    },
+    "TeachingAssignment": {
+      "title": "TeachingAssignment",
+      "description": "Asignación académica de un docente a un grupo y asignatura",
+      "type": "object",
+      "properties": {
+        "teacherId": {
+          "type": "string",
+          "description": "ID del docente asignado"
+        },
+        "subjectId": {
+          "type": "string",
+          "description": "ID o nombre de la asignatura"
+        },
+        "subjectName": {
+          "type": "string",
+          "description": "Nombre legible de la asignatura"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Código del grupo (e.g. 6A)"
+        },
+        "weeklyHours": {
+          "type": "number",
+          "description": "Intensidad horaria semanal"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de actualización"
+        }
+      },
+      "required": ["teacherId", "subjectName", "groupId", "weeklyHours"]
+    },
+    "SystemUser": {
+      "title": "SystemUser",
+      "description": "Usuario institucional con credenciales (usuario y contraseña) y permisos controlados",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Nombre de usuario para iniciar sesión"
+        },
+        "password": {
+          "type": "string",
+          "description": "Contraseña asignada por el administrador"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Nombres y apellidos del usuario"
+        },
+        "cargo": {
+          "type": "string",
+          "description": "Cargo institucional (Docente, Coordinador, etc.)"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["superadmin", "usuario_limitado"],
+          "description": "Rol del usuario en el sistema"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["activo", "inactivo"],
+          "description": "Estado del usuario"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email de contacto opcional"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Identificador del administrador creador"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de última modificación"
+        }
+      },
+      "required": ["username", "password", "fullName", "role", "status"]
+    }
+  },
+  "firestore": {
+    "/authorizedUsers/{userId}": {
+      "schema": "SystemUser",
+      "description": "Colección de usuarios institucionales y asignación de permisos"
+    },
+    "/teachers/{teacherId}": {
+      "schema": "Teacher",
+      "description": "Colección de docentes registrados"
+    },
+    "/schoolGroups/{groupId}": {
+      "schema": "SchoolGroup",
+      "description": "Colección de grupos y cursos escolares"
+    },
+    "/subjects/{subjectId}": {
+      "schema": "Subject",
+      "description": "Catálogo de asignaturas"
+    },
+    "/teachingAssignments/{assignmentId}": {
+      "schema": "TeachingAssignment",
+      "description": "Carga académica y asignaciones docentes"
+    }
+  }
+}
